@@ -46,9 +46,12 @@ sample_freq_fs_fc, segment_time_fs_fc, spec_data_fs_fc = scipy.signal.spectrogra
 sample_freq_fs_sc, segment_time_fs_sc, spec_data_fs_sc = scipy.signal.spectrogram(second_channel, sample_rate)
 # Note sample_rate and sampling frequency values are same but theoretically they are different measures
 
-#####################################################################
+# Read channels for second sample
+first_channel_noisy = data_noisy[:, 0]
+second_channel_noisy = data_noisy[:, 1]
 
 ## Plots First Sample ##
+#####################################################################
 st.markdown('# First Sample Spectogram and Frequency Analysis')
 fig, ax = plt.subplots(2,2, figsize=(15, 10))
 fig.tight_layout(pad=6.0)
@@ -78,13 +81,8 @@ ax[1, 1].set_ylabel(ylabel='Frequency [Hz]', size=12)
 ax[1, 1].tick_params(axis='both', which='both', labelsize=12)
 st.pyplot()
 
-################################################################
-
-# Read channels for second sample
-first_channel_noisy = data_noisy[:, 0]
-second_channel_noisy = data_noisy[:, 1]
-
 ## Plot Second Sample ##
+################################################################
 st.markdown('# Second Sample Spectogram and Frequency Analysis')
 fig, ax = plt.subplots(2,2, figsize=(15, 10))
 fig.tight_layout(pad=6.0)
@@ -112,3 +110,5 @@ ax[1, 1].set_xlabel(xlabel='Time [sec]', size=12)
 ax[1, 1].set_ylabel(ylabel='Frequency [Hz]', size=12)
 ax[1, 1].tick_params(axis='both', which='both', labelsize=12)
 st.pyplot()
+
+################################################################
