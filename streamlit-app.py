@@ -56,6 +56,10 @@ elif option == "Piano Music":
     st.audio(audio_bytes, format='audio/ogg')
 
 elif option == "Upload your own!":
+    st.markdown("## Number of samples")
+    no_samples = st.selectbox("Pick your sample!",
+                          options=["2", "1"])
+
     st.markdown("# Select your first sample")
     uploaded_file1 = st.file_uploader("Pick a wave file!", type='wav', key="sample1")
 
@@ -69,14 +73,6 @@ elif option == "Upload your own!":
     if uploaded_file2 is None:
         st.info("Please upload a wave file.")
         st.stop()
-
-    # # Display first sample
-    # st.markdown("# Listen to First Sample")
-    # st.audio(uploaded_file1, format='audio/ogg')
-    #
-    # # Display second sample
-    # st.markdown("# Listen to second Sample")
-    # st.audio(uploaded_file2, format='audio/ogg')
 
     # We generate byte data from the uploaded sample 1 to store locally
     bytes_data = uploaded_file1.getvalue()
@@ -131,7 +127,9 @@ spec_yticks = [6.28 * i for i in helper]
 #####################################################################
 st.markdown('# First Sample Analysis for Both Channels')
 
-st.markdown('### Amplitude-Time ')
+
+st.markdown('## Amplitude-Time ')
+at1 = st.checkbox("Show", key=1)
 
 fig, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
@@ -152,11 +150,14 @@ ax[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
 ax[1].set_ylim(60, 87)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if at1:
+    st.pyplot(fig)
 
-st.markdown('### Spectrogram')
+## -------------------------------------------------------------
+st.markdown('## Spectrogram')
+spec1 = st.checkbox("Show", key=2)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig2, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel, Fs=sample_rate)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -173,54 +174,68 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if spec1:
+    st.pyplot(fig2)
 
-st.markdown('### Power Spectral Density')
+## ---------------------------------------------------------------
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+st.markdown('## Power Spectral Density')
+psd1 = st.checkbox("Show", key=3)
+
+fig3, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
-freqs, psd = signal.welch(first_channel)
-ax[0].semilogx(6.28*freqs, psd)
+# freqs, psd = signal.welch(first_channel)
+# ax[0].semilogx(6.28*freqs, psd)
+ax[0].psd(first_channel)
 ax[0].set_xlabel('Frequency [rad/s]', size=25)
-ax[0].set_ylabel('Power [V**2 / Hz]', size=25)
+ax[0].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=25)
 
-freqs, psd = signal.welch(second_channel)
-ax[1].semilogx(6.28*freqs, psd)
+# freqs, psd = signal.welch(second_channel)
+# ax[1].semilogx(6.28*freqs, psd)
+ax[1].psd(second_channel)
 ax[1].set_xlabel('Frequency [rad/s]', size=25)
-ax[1].set_ylabel('Power [V**2 / Hz]', size=25)
+ax[1].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=25)
-st.pyplot()
+if psd1:
+    st.pyplot(fig3)
 
-st.markdown('### Fast Fourier Transform')
+## ---------------------------------------------------------------
+
+st.markdown('## Fast Fourier Transform')
+fft1 = st.checkbox("Show", key=4)
 
 fast1 = fft(first_channel)
 fast2 = fft(second_channel)
+xf1 = fftfreq(len(first_channel), 44100)
+xf2 = fftfreq(len(second_channel), 44100)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig4, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
-ax[0].set_xlabel('X axis unit', size=25)
-ax[0].set_ylabel('Y axis unit', size=25)
+ax[0].set_xlabel('Frequency [rad/s]', size=25)
+ax[0].set_ylabel('Amplitude', size=25)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=25)
-ax[0].plot(np.abs(fast1))
+ax[0].plot(6.278*xf1, np.abs(fast1))
 
-ax[1].set_xlabel('X axis unit', size=25)
-ax[1].set_ylabel('Y axis unit', size=25)
+ax[1].set_xlabel('Frequency [rad/s]', size=25)
+ax[1].set_ylabel('Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=25)
-ax[1].plot(np.abs(fast2))
-st.pyplot()
+ax[1].plot(6.278 * xf2, np.abs(fast2))
+if fft1:
+    st.pyplot(fig4)
 
 ## Plot Second Sample ##
 ################################################################
 st.markdown('# Second Sample Analysis for Both Channels')
 
-st.markdown('### Amplitude-Time ')
+st.markdown('## Amplitude-Time ')
+at2 = st.checkbox("Show", key=5)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig5, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(20*np.log10(np.abs(first_channel_noisy)))
 ax[0].set_xticks(xticks_2)
@@ -239,11 +254,14 @@ ax[1].set_ylabel(ylabel='Amplitude [dB]', size=25)
 ax[1].set_ylim(60, 87)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
-#
-st.markdown('### Spectrogram')
+if at2:
+    st.pyplot(fig5)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+## -------------------------------------------------------------
+st.markdown('### Spectrogram')
+spec2 = st.checkbox("Show", key=6)
+
+fig6, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_noisy, Fs=sample_rate_noisy)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -260,76 +278,91 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if spec2:
+    st.pyplot(fig6)
 
+## -------------------------------------------------------------
 st.markdown('### Power Spectral Density')
+psd2 = st.checkbox("Show", key=7)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig7, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
-freqs, psd = signal.welch(first_channel_noisy)
-ax[0].semilogx(6.28*freqs, psd)
+# freqs, psd = signal.welch(first_channel_noisy)
+# ax[0].semilogx(6.28*freqs, psd)
+ax[0].psd(first_channel_noisy)
 ax[0].set_xlabel('Frequency [rad/s]', size=25)
-ax[0].set_ylabel('Power [V**2 / Hz]', size=25)
+ax[0].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=25)
 
-freqs, psd = signal.welch(second_channel_noisy)
-ax[1].semilogx(6.28*freqs, psd)
+# freqs, psd = signal.welch(second_channel_noisy)
+# ax[1].semilogx(6.28*freqs, psd)
+ax[1].psd(second_channel_noisy)
 ax[1].set_xlabel('Frequency [rad/s]', size=25)
-ax[1].set_ylabel('Power [V**2 / Hz]', size=25)
+ax[1].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=25)
-st.pyplot()
+if psd2:
+    st.pyplot(fig7)
 
+## ---------------------------------------------------------------
 st.markdown('### Fast Fourier Transform')
+fft2 = st.checkbox("Show", key=8)
 
 fast1 = fft(first_channel_noisy)
 fast2 = fft(second_channel_noisy)
+xf1n = fftfreq(len(first_channel_noisy), 44100)
+xf2n = fftfreq(len(second_channel_noisy), 44100)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig8, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
-ax[0].set_xlabel('X axis unit', size=25)
-ax[0].set_ylabel('Y axis unit', size=25)
+ax[0].set_xlabel('Frequency [rad/s]', size=25)
+ax[0].set_ylabel('Amplitude', size=25)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=25)
-ax[0].plot(np.abs(fast1))
+ax[0].plot(6.278*xf1n, np.abs(fast1))
 
-ax[1].set_xlabel('X axis unit', size=25)
-ax[1].set_ylabel('Y axis unit', size=25)
+ax[1].set_xlabel('Frequency [rad/s]', size=25)
+ax[1].set_ylabel('Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=25)
-ax[1].plot(np.abs(fast2))
-st.pyplot()
+ax[1].plot(6.278 * xf2n, np.abs(fast2))
+if fft2:
+    st.pyplot(fig8)
 
 
 # Filter Functions
 ################################################################
 
 ## LOW PASS
+@st.cache
 def intit_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
     return b, a
 
-
+@st.cache
 def lowpass_filter(data, cutoff, fs, order=5):
     b, a = intit_lowpass(cutoff, fs, order=order)
     y = filtfilt(b, a, data)
     return y
 
 ## HIGH PASS
+@st.cache
 def init_highpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='high', analog=False)
     return b, a
 
+@st.cache
 def highpass_filter(data, cutoff, fs, order=5):
     b, a = init_highpass(cutoff, fs, order=order)
     y = filtfilt(b, a, data)
     return y
 
+@st.cache
 ## BANDPASS
 def init_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -338,6 +371,7 @@ def init_bandpass(lowcut, highcut, fs, order=5):
     b, a = butter(order, [low, high], btype='band')
     return b, a
 
+@st.cache
 def bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = init_bandpass(lowcut, highcut, fs, order=order)
     y = filtfilt(b, a, data)
@@ -356,8 +390,9 @@ second_channel_filtered_low = lowpass_filter(second_channel, cutoff_low, sample_
 st.markdown('## Low Pass Filter')
 
 st.markdown('### Spectrogram')
+lp1 = st.checkbox("Show", key=9)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig9, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_filtered_low, Fs=sample_rate)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -374,11 +409,13 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
-
+if lp1:
+    st.pyplot(fig9)
+## -------------------------------------
 st.markdown('### Amplitude(mirrored) - Samples')
+as3 = st.checkbox("Show", key=10)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig10, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(first_channel_filtered_low)
 ax[0].set_xlabel(xlabel='Samples', size=25)
@@ -391,7 +428,8 @@ ax[1].set_xlabel(xlabel='Samples', size=25)
 ax[1].set_ylabel(ylabel='Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if as3:
+    st.pyplot(fig10)
 
 # High pass filter
 #####################################
@@ -402,8 +440,9 @@ second_channel_filtered_high = highpass_filter(second_channel, cutoff_high, samp
 st.markdown('## High Pass Filter')
 
 st.markdown('### Spectrogram')
+spec3 = st.checkbox("Show", key=11)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig11, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_filtered_high, Fs=sample_rate)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -420,11 +459,14 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if spec3:
+    st.pyplot(fig11)
 
+## ---------------------------------
 st.markdown('### Amplitude(mirrored) - Samples')
+as4 = st.checkbox("Show", key=12)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig12, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(first_channel_filtered_high)
 ax[0].set_xlabel(xlabel='Samples', size=25)
@@ -437,7 +479,8 @@ ax[1].set_xlabel(xlabel='Samples', size=25)
 ax[1].set_ylabel(ylabel='Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if as4:
+    st.pyplot(fig12)
 
 # Band pass filter
 #####################################
@@ -449,8 +492,9 @@ first_channel_filtered_band = bandpass_filter(first_channel, band_low, band_high
 second_channel_filtered_band = bandpass_filter(second_channel, band_low, band_high, sample_rate)
 
 st.markdown('### Spectrogram')
+spec4 = st.checkbox("Show", key=13)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig13, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_filtered_band, Fs=sample_rate)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -460,6 +504,7 @@ ax[0].set_yticklabels(spec_yticks)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=18)
 
+
 ax[1].specgram(second_channel_filtered_band, Fs=sample_rate)
 ax[1].set_xlabel(xlabel='Time [sec]', size=25)
 ax[1].set_ylabel(ylabel='Frequency Amplitude [rad/s]', size=25)
@@ -467,11 +512,14 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if spec4:
+    st.pyplot(fig13)
 
+## ---------------------------------
 st.markdown('### Amplitude(mirrored) - Samples')
+as5 = st.checkbox("Show", key=14)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig14, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(first_channel_filtered_band)
 ax[0].set_xlabel(xlabel='Samples', size=25)
@@ -484,7 +532,8 @@ ax[1].set_xlabel(xlabel='Samples', size=25)
 ax[1].set_ylabel(ylabel='Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if as5:
+    st.pyplot(fig14)
 
 # Plot filters for second sample
 ################################################################
@@ -499,8 +548,9 @@ second_channel_filtered_low = lowpass_filter(second_channel_noisy, cutoff_low, s
 st.markdown('## Low Pass Filter')
 
 st.markdown('### Spectrogram')
+lp2 = st.checkbox("Show", key=15)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig15, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_filtered_low, Fs=sample_rate_noisy)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -517,11 +567,14 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if lp2:
+    st.pyplot(fig15)
 
+## ---------------------------------
 st.markdown('### Amplitude(mirrored) - Samples')
+as6 = st.checkbox("Show", key=16)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig16, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(first_channel_filtered_low)
 ax[0].set_xlabel(xlabel='Samples', size=25)
@@ -534,7 +587,8 @@ ax[1].set_xlabel(xlabel='Samples', size=25)
 ax[1].set_ylabel(ylabel='Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if as6:
+    st.pyplot(fig16)
 
 # High pass filter
 #####################################
@@ -545,8 +599,9 @@ second_channel_filtered_high = highpass_filter(second_channel_noisy, cutoff_high
 st.markdown('## High Pass Filter')
 
 st.markdown('### Spectrogram')
+spec5 = st.checkbox("Show", key=17)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig17, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_filtered_high, Fs=sample_rate_noisy)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -563,11 +618,14 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if spec5:
+    st.pyplot(fig17)
 
+## ---------------------------------
 st.markdown('### Amplitude(mirrored) - Samples')
+as7 = st.checkbox("Show", key=18)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig18, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(first_channel_filtered_high)
 ax[0].set_xlabel(xlabel='Samples', size=25)
@@ -580,7 +638,9 @@ ax[1].set_xlabel(xlabel='Samples', size=25)
 ax[1].set_ylabel(ylabel='Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if as7:
+    st.pyplot(fig18)
+
 
 # Band pass filter
 #####################################
@@ -592,8 +652,9 @@ first_channel_filtered_band = bandpass_filter(first_channel_noisy, band_low, ban
 second_channel_filtered_band = bandpass_filter(second_channel_noisy, band_low, band_high, sample_rate)
 
 st.markdown('### Spectrogram')
+spec8 = st.checkbox("Show", key=19)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig19, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].specgram(first_channel_filtered_band, Fs=sample_rate_noisy)
 ax[0].set_xlabel(xlabel='Time [sec]', size=25)
@@ -610,11 +671,14 @@ ax[1].set_yticks(helper)
 ax[1].set_yticklabels(spec_yticks)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=18)
-st.pyplot()
+if spec8:
+    st.pyplot(fig19)
 
+## ---------------------------------
 st.markdown('### Amplitude(mirrored) - Samples')
+as6 = st.checkbox("Show", key=20)
 
-fig, ax = plt.subplots(1, 2, figsize=(30, 15))
+fig20, ax = plt.subplots(1, 2, figsize=(30, 15))
 fig.tight_layout(pad=10.0)
 ax[0].plot(first_channel_filtered_band)
 ax[0].set_xlabel(xlabel='Samples', size=25)
@@ -627,4 +691,5 @@ ax[1].set_xlabel(xlabel='Samples', size=25)
 ax[1].set_ylabel(ylabel='Amplitude', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=15)
-st.pyplot()
+if as6:
+    st.pyplot(fig20)
