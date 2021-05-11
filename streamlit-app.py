@@ -76,13 +76,21 @@ elif option == "Upload your own!":
 
     # We generate byte data from the uploaded sample 1 to store locally
     bytes_data = uploaded_file1.getvalue()
-    with open('cache/sample1.wav', mode='bx') as f:
-        f.write(bytes_data)
+
+    if os.path.exists('cache/sample1.wav'):
+        pass
+    else:
+        with open('cache/sample1.wav', mode='bx') as f:
+            f.write(bytes_data)
 
     # We generate byte data from the uploaded sample 2 to store locally
     bytes_data = uploaded_file2.getvalue()
-    with open('cache/sample2.wav', mode='bx') as f:
-        f.write(bytes_data)
+
+    if os.path.exists('cache/sample2.wav'):
+        pass
+    else:
+        with open('cache/sample2.wav', mode='bx') as f:
+            f.write(bytes_data)
 
     # Read the clean .wav file
     sample_rate, data = wavfile.read('cache/sample1.wav')
@@ -188,7 +196,7 @@ fig.tight_layout(pad=10.0)
 # ax[0].semilogx(6.28*freqs, psd)
 ax[0].psd(first_channel)
 ax[0].set_xlabel('Frequency [rad/s]', size=25)
-ax[0].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
+ax[0].set_ylabel('Power Spectral Denisty [db]', size=25)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=25)
 
@@ -196,7 +204,7 @@ ax[0].tick_params(axis='both', which='both', labelsize=25)
 # ax[1].semilogx(6.28*freqs, psd)
 ax[1].psd(second_channel)
 ax[1].set_xlabel('Frequency [rad/s]', size=25)
-ax[1].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
+ax[1].set_ylabel('Power Spectral Denisty [db]', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=25)
 if psd1:
@@ -291,7 +299,7 @@ fig.tight_layout(pad=10.0)
 # ax[0].semilogx(6.28*freqs, psd)
 ax[0].psd(first_channel_noisy)
 ax[0].set_xlabel('Frequency [rad/s]', size=25)
-ax[0].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
+ax[0].set_ylabel('Power Spectral Denisty [db]', size=25)
 ax[0].set_title("First Channel", fontsize=30)
 ax[0].tick_params(axis='both', which='both', labelsize=25)
 
@@ -299,7 +307,7 @@ ax[0].tick_params(axis='both', which='both', labelsize=25)
 # ax[1].semilogx(6.28*freqs, psd)
 ax[1].psd(second_channel_noisy)
 ax[1].set_xlabel('Frequency [rad/s]', size=25)
-ax[1].set_ylabel('Power Spectral Denisty [db/Hz]', size=25)
+ax[1].set_ylabel('Power Spectral Denisty [db]', size=25)
 ax[1].set_title("Second Channel", fontsize=30)
 ax[1].tick_params(axis='both', which='both', labelsize=25)
 if psd2:
