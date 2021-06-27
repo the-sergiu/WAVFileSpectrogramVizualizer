@@ -23,9 +23,12 @@ Your browser should now load up with the app.
 
 Below are a few images presenting how the app looks once it's up and running.
 
-![img/1.png](img/1.png)
-![img/2.png](img/2.png)
-![img/3.png](img/3.png)
-![img/4.png](img/4.png)
+![first img](img/1.png)
+
+![second img](img/2.png)
+
+![third img](img/3.png)
+
+![fourth img](img/4.png)
 
 More images of the app's functionality can be found in the **img** folder!
